@@ -1,0 +1,65 @@
+
+
+
+(defvar vim-mode nil "Mode that replicate some of the vim functionality")
+
+
+(make-variable-buffer-local 'vim-mode)
+
+(defvar vim-mode-map nil "Keymap for vim-major mode")
+(if vim-mode-map
+	nil
+	(setq vim-mode-map (make-keymap)))
+
+
+
+
+
+
+(defun refill-mode (&optional arg)
+    "Refill minor mode."
+	(interactive "P")
+	(setq refill-mode
+		(if (null arg)
+			(not refill-mode)
+			(> (prefix-numeric-value arg) 0)))
+	(if refill-mode
+	 	(code-for-turning-on-refill-mode)
+		(code-for-turning-off-refill-mode)))
+
+
+(if (not (assq 'refill-mode minor-mode-alist))
+	(setq minor-mode-alist
+		  (cons '(refill-mode " Refill") minor-mode-alist)))
+
+(defun refill-mode (&optional arg)
+    "Refill minor mode."
+	(interactive "P")
+	(setq refill-mode
+		(if (null arg)
+			(not refill-mode)
+			(> (prefix-numeric-value arg) 0)))
+	(make-local-hook 'after-change-functions)
+	(if refill-mode
+		(add-hook 'after-change-functions 'refill nil t)
+		(remove-hook 'after-change-functions 'refill t)))
+
+
+(defun refill (start end len)
+    "After a text change, refill the current paragraph."
+	(let ( (left (if (zerop len)
+		   		 	 start
+					 (save-excursion
+						(goto-char start)
+						(beginning-of-line 0)
+						(point))))
+		(save-excursion
+			(fill-region left end nil nil t)))))
+
+
+
+(defmacro limited-save-excursion (&rest subexprs)
+    "Like save-excursion, but only restores oint."
+	(append '(let ((orig-point (point))))
+			subexprs
+			( (goto-char orig-point))))
