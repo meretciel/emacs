@@ -30,6 +30,9 @@
 (define-key vim-normal-mode-map (kbd "e") 'vim-shortcut-e)
 ;;(define-key vim-normal-mode-map (kbd "E") 'forward-word)
 (define-key vim-normal-mode-map (kbd "w") 'vim-shortcut-w)
+(define-key vim-normal-mode-map (kbd "P") 'yank)
+(define-key vim-normal-mode-map (kbd "p") 'vim-shortcut-p)
+(define-key vim-normal-mode-map (kbd "yy") 'vim-shortcut-yy)
 
 (define-key vim-normal-mode-map (kbd "i") 'disable-vim-normal-mode)
 (define-key vim-normal-mode-map (kbd "a") 'vim-shortcut-a)
@@ -37,7 +40,9 @@
 (define-key vim-normal-mode-map (kbd ":w RET") 'save-buffer)
 (define-key vim-normal-mode-map (kbd ",d") 'vim-shortcut-delete-all)
 (define-key vim-normal-mode-map (kbd ":open RET") 'find-file)
+(define-key vim-normal-mode-map (kbd ":edit RET") 'find-file)
 (define-key vim-normal-mode-map (kbd ":new RET") 'find-file-horizontal-split)
+(define-key vim-normal-mode-map (kbd ":newframe RET") 'make-frame-command)
 (define-key vim-normal-mode-map (kbd ":buffer RET") 'switch-to-buffer)
 (define-key vim-normal-mode-map (kbd ":killbuffer RET") 'kill-buffer)
 (define-key vim-normal-mode-map (kbd ":vnew RET") 'find-file-vertical-split)
@@ -230,3 +235,53 @@
 ;; This has global effect.
 (add-hook 'pre-command-hook 'vim-update-cursor-color)
 
+;; Maybe we do not need this one.
+(defvar vim-start-new-line-when-paste nil
+  "If we need to start a new line when paste.
+   Note that if we use the default keybinding to past, this will break.")
+
+(defvar vim-start-new-line-text nil
+  "This stores the string that requires to start a new line when paste.")
+
+;;(make-variable-buffer-local 'vim-start-new-line-when-paste)
+;;(make-variable-buffer-local 'vim-start-new-line-text)
+
+
+(defun vim-shortcut-p ()
+  (interactive)
+  (let (start end (current (point)))
+	(if (and vim-start-new-line-when-paste
+			 (string= (car kill-ring-yank-pointer)
+				 vim-start-new-line-text))
+		(progn
+		  (move-end-of-line nil)
+		  (open-line 1)
+		  (next-line)
+		  (yank))
+
+	(move-beginning-of-line nil)
+	(setq start (point))
+	(move-end-of-line nil)
+	(setq end (point))
+	(cond
+	 ( (eq start end) ;; the line is empty
+	   (yank))
+	 ( (eq current end)
+	   (insert " ")
+	   (yank))
+	 ( t
+	   (goto-char current)
+	   (forward-char)
+	   (yank))))))
+
+(defun vim-shortcut-yy ()
+  (interactive)
+  (let (start end (point-before (point)))
+	(move-beginning-of-line nil)
+	(setq start (point))
+	(move-end-of-line nil)
+	(setq end (point))
+	(kill-ring-save start end)
+	(setq vim-start-new-line-when-paste t)
+	(setq vim-start-new-line-text (car kill-ring-yank-pointer))
+	(goto-char point-before)))

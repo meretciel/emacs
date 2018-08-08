@@ -35,7 +35,7 @@
 
 (define-key vim-visual-line-mode-map (kbd "j") 'vvlm-next-line)
 (define-key vim-visual-line-mode-map (kbd "k") 'vvlm-previous-line)
-
+(define-key vim-visual-line-mode-map (kbd "d") 'vvlm-kill-selected)
 
 
 
@@ -127,7 +127,8 @@
 	   ;; the end of the line. This can be considered as an invariant
 	   (exchange-point-and-mark)
 	   (previous-line))
-	 ( t (previous-line)))))
+	 ( t (previous-line)))
+	(move-beginning-of-line nil)))
 
 (defun vvlm-next-line ()
   (interactive)
@@ -137,10 +138,13 @@
 		(next-line)
 	  (if (< (point) (mark-marker))
 		  (exchange-point-and-mark))
-	  (next-line))))
+	  (next-line)
+	  (move-end-of-line nil))))
 
 
+(defun vvlm-kill-selected ()
+  (interactive)
+  (kill-region (region-beginning) (region-end))
+  (delete-forward-char 1)
+  (enable-vim-normal-mode))
 
-
-
-  

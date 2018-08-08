@@ -1,0 +1,11 @@
+
+
+TODO:
+1. figure out the balanced parenthesis
+2. add d operation to the visual-line-mode
+3. custermize the search operation
+4. define E and W operation in the normal mode
+
+
+
+(make-frame-command)
