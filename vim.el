@@ -28,6 +28,7 @@
 (define-key vim-normal-mode-map (kbd "l") 'forward-char)
 (define-key vim-normal-mode-map (kbd "b") 'backward-word)
 (define-key vim-normal-mode-map (kbd "e") 'vim-shortcut-e)
+(define-key vim-normal-mode-map (kbd "S") 'vim-shortcut-S)
 ;;(define-key vim-normal-mode-map (kbd "E") 'forward-word)
 (define-key vim-normal-mode-map (kbd "w") 'vim-shortcut-w)
 (define-key vim-normal-mode-map (kbd "P") 'yank)
@@ -36,6 +37,7 @@
 
 (define-key vim-normal-mode-map (kbd "i") 'disable-vim-normal-mode)
 (define-key vim-normal-mode-map (kbd "a") 'vim-shortcut-a)
+(define-key vim-normal-mode-map (kbd "C-c C-n") 'vim-toggle-relative-line)
 
 (define-key vim-normal-mode-map (kbd ":w RET") 'save-buffer)
 (define-key vim-normal-mode-map (kbd ",d") 'vim-shortcut-delete-all)
@@ -57,12 +59,16 @@
 (define-key vim-normal-mode-map (kbd "dd") 'vim-shortcut-remove-line)
 (define-key vim-normal-mode-map (kbd "x") 'delete-forward-char)
 (define-key vim-normal-mode-map (kbd "^") 'move-beginning-of-line)
+(define-key vim-normal-mode-map (kbd "0") 'move-beginning-of-line)
 (define-key vim-normal-mode-map (kbd "$") 'move-end-of-line)
 (define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-open-newline-below)
 (define-key vim-normal-mode-map (kbd "s") 'vim-shortcut-substitute)
 
+;; This section is related to parenthesis matching in normal mode
+(define-key vim-normal-mode-map (kbd "%") 'vim-paren-match)
 
-;; This section related to visual mode
+
+;; This section is related to visual mode
 (define-key vim-normal-mode-map (kbd "v") 'enable-vim-visual-mode)
 (define-key vim-normal-mode-map (kbd "V") 'enable-vim-visual-line-mode)
 
@@ -123,13 +129,19 @@
 
 (defun vim-shortcut-open-newline-below (&optional N)
   (interactive "P")
-  (move-beginning-of-line 2)
-  
+  (let ((current-line (line-number-at-pos)))
+	(move-beginning-of-line 2)
+	(if (equal current-line (line-number-at-pos))
+		(progn
+		  (move-end-of-line nil)
+		  (insert "\n"))))
+ 
   (let ((n (if (null N)
 			   1
 			 (prefix-numeric-value N))))
 	(open-line n))
   (disable-vim-normal-mode))
+
 
 
 
@@ -285,3 +297,33 @@
 	(setq vim-start-new-line-when-paste t)
 	(setq vim-start-new-line-text (car kill-ring-yank-pointer))
 	(goto-char point-before)))
+
+
+(defun vim-paren-match ()
+  "If the cursor is on a (), press % will make the cursor jump to the matched paren."
+  (interactive)
+  (let ( (current-char (following-char)))
+	(cond
+	 ( (equal current-char ?\()
+	   (forward-list)
+	   (backward-char))
+	 ( (equal current-char ?\))
+	   (forward-char)
+	   (backward-list)))))
+
+	   
+(defun vim-shortcut-S ()
+  (interactive)
+  (kill-whole-line)
+  (disable-vim-normal-mode))
+
+
+
+
+;;(define-key vim-normal-mode-map (kbd "C-c C-n") 'vim-toggle-relative-line)
+(defun vim-toggle-relative-line ()
+  (interactive)
+  (cond
+   ( (eq display-line-numbers t) (setq display-line-numbers 'relative))
+   ( (eq display-line-numbers 'relative) (setq display-line-numbers t))))
+

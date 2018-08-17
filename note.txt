@@ -1,24 +1,33 @@
 
 
 TODO:
-1. figure out the balanced parenthesis
 2. add M-: to the visual mode; otherwise we cannot execute the command in visual mode any more.:w
+17. add oo and OO..
+
 3. custermize the search operation
 4. define E and W operation in the normal mode
-5. add O operation in the normal mode
 6. add ,w key binding to the normal mode
 7. add search inline functionality
-8. add 0 to the normal mode. (need to think about this one)
 9. add . and undo operation.
 10. C-c C-n create a new empty buffer
 11. add yank feature in visual and visual-line mode
-12. relative line feature
 13.popup and auto-complete
-14. add S shortcut
 15. add C-V visual-block mode
 16. add "add comments" functionality
-17. add oo and OO..
 18. add undo and redo feature.
+
+19. search, wrapped search, incremental search
+
+20. Process, subprocess and intraprocess communication.
+21. Invisable text property.
+22. read the manual of Using Interactive: https://www.gnu.org/software/emacs/manual/html_node/elisp/Using-Interactive.html
+23. set no wrap in the .emacs file
+24. set default brower
+25. read activating URLs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Goto-Address-mode.html
+26. put (setq-default truncate-lines t)
+27. rewrite the e shortcut. currently, it will stuck at the end of the same word if we press twice
+28. fix the vim-visual-line mode movement
+
 
 Command
 1. make-frame-command
@@ -29,3 +38,18 @@ Command
 6. (set-mark-command ARG)
 7. (marker-position)
 8. mark-marker
+9. text property invisible
+10. balanced parenthesis
+11. org mode
+12. clickable text
+13. search
+14. how to communicate with python interpreter.
+15. how to connec to the internet and send requestion and get response.
+
+
+
+global-display-line-numbers-mode
+display-line-numbers-current-absolute
+display-line-numbers
+
+(setq-default display-line-numbers 'relative)
