@@ -1,5 +1,7 @@
 ;; In this file, we will define different visual mode
 
+(defvar vim-global-const-comment-symbol ";;") 
+
 
 ;; (normal) visual mode
 
@@ -26,15 +28,16 @@
 
 ;; define the key binding in the vim visual mode
 (define-key vim-visual-mode-map (kbd "ESC") 'keyboard-quit)
+(define-key vim-visual-mode-map (kbd "s") 'vvm-change-text)
 ;;(define-key vim-visual-mode-map (kbd "M-:") 'eval-expression)
 
 
 
 ;; define the vim-visul-line-mode
 
-(define-key vim-visual-line-mode-map (kbd "j") 'vvlm-next-line)
-(define-key vim-visual-line-mode-map (kbd "k") 'vvlm-previous-line)
-(define-key vim-visual-line-mode-map (kbd "d") 'vvlm-kill-selected)
+(define-key vim-visual-line-mode-map (kbd "j")   'vvlm-next-line)
+(define-key vim-visual-line-mode-map (kbd "k")   'vvlm-previous-line)
+(define-key vim-visual-line-mode-map (kbd "d")   'vvlm-kill-selected)
 (define-key vim-visual-line-mode-map (kbd "ESC") 'keyboard-quit)
 
 
@@ -148,4 +151,11 @@
   (setq vim-start-new-line-when-paste t)
   (setq vim-start-new-line-text (car kill-ring-yank-pointer))
   (enable-vim-normal-mode))
+
+
+(defun vvm-change-text ()
+  (interactive)
+  (forward-char)
+  (kill-region (region-beginning) (region-end))
+  (disable-vim-normal-mode))
 

@@ -2,11 +2,25 @@
 
 TODO:
 2. add M-: to the visual mode; otherwise we cannot execute the command in visual mode any more.:w
-17. add oo and OO..
 
-3. custermize the search operation
-4. define E and W operation in the normal mode
-6. add ,w key binding to the normal mode
+- create key mapping for: oo, OO, O and r. In order to do so, we need the macro
+  to create the special key mapping more easily.
+- add ,w and ,W key binding to the normal mode
+
+- create macro for special key mapping creation
+
+- implement function that
+  a. check if the current buffer is safed
+  b. if it is not, then ask use to confirm
+  c. if the buffer is already saved, then start the vim process and let the vim editor
+  	 edit the content
+  d. get back to emacs editor.
+
+- create shortcut for comments
+
+- add u and C-r
+
+3.custermize the search operation
 7. add search inline functionality
 9. add . and undo operation.
 10. C-c C-n create a new empty buffer
@@ -15,9 +29,7 @@ TODO:
 15. add C-V visual-block mode
 16. add "add comments" functionality
 18. add undo and redo feature.
-
 19. search, wrapped search, incremental search
-
 20. Process, subprocess and intraprocess communication.
 21. Invisable text property.
 22. read the manual of Using Interactive: https://www.gnu.org/software/emacs/manual/html_node/elisp/Using-Interactive.html
@@ -27,7 +39,9 @@ TODO:
 26. put (setq-default truncate-lines t)
 27. rewrite the e shortcut. currently, it will stuck at the end of the same word if we press twice
 28. fix the vim-visual-line mode movement
-
+29. add utility script.
+	- utils-empty-line-p
+30. fix shorcuts of w, e, and b
 
 Command
 1. make-frame-command
@@ -53,3 +67,7 @@ display-line-numbers-current-absolute
 display-line-numbers
 
 (setq-default display-line-numbers 'relative)
+
+
+
+

@@ -1,5 +1,4 @@
 
-
 ;; define the ,vim mode
 (defvar vim-normal-mode nil "Mode that replicate some of the vim functionality")
 (make-variable-buffer-local 'vim-normal-mode)
@@ -7,9 +6,6 @@
 
 (defvar vim-normal-mode-cursor-color "#FF0000"
   "Cursor color when in the normal mode.")
-
-
-
 
 ;; define the keymap and add keybinding
 (defvar vim-normal-mode-map nil "Keymap for vim-major mode")
@@ -19,38 +15,37 @@
 	  (setq vim-normal-mode-map (make-keymap))
 	  (suppress-keymap vim-normal-mode-map)))
 
-
-	  
 ;; movement 
 (define-key vim-normal-mode-map (kbd "h") 'backward-char)
 (define-key vim-normal-mode-map (kbd "j") 'next-line)
 (define-key vim-normal-mode-map (kbd "k") 'previous-line)
 (define-key vim-normal-mode-map (kbd "l") 'forward-char)
 (define-key vim-normal-mode-map (kbd "b") 'backward-word)
+(define-key vim-normal-mode-map (kbd "B") 'vim-shortcut-B)
 (define-key vim-normal-mode-map (kbd "e") 'vim-shortcut-e)
+(define-key vim-normal-mode-map (kbd "E") 'vim-shortcut-E)
 (define-key vim-normal-mode-map (kbd "S") 'vim-shortcut-S)
-;;(define-key vim-normal-mode-map (kbd "E") 'forward-word)
 (define-key vim-normal-mode-map (kbd "w") 'vim-shortcut-w)
+(define-key vim-normal-mode-map (kbd "W") 'vim-shortcut-W)
 (define-key vim-normal-mode-map (kbd "P") 'yank)
 (define-key vim-normal-mode-map (kbd "p") 'vim-shortcut-p)
 (define-key vim-normal-mode-map (kbd "yy") 'vim-shortcut-yy)
-
 (define-key vim-normal-mode-map (kbd "i") 'disable-vim-normal-mode)
 (define-key vim-normal-mode-map (kbd "a") 'vim-shortcut-a)
 (define-key vim-normal-mode-map (kbd "C-c C-n") 'vim-toggle-relative-line)
-
 (define-key vim-normal-mode-map (kbd ":w RET") 'save-buffer)
 (define-key vim-normal-mode-map (kbd ",d") 'vim-shortcut-delete-all)
-(define-key vim-normal-mode-map (kbd ":open RET") 'find-file)
-(define-key vim-normal-mode-map (kbd ":edit RET") 'find-file)
-(define-key vim-normal-mode-map (kbd ":new RET") 'find-file-horizontal-split)
-(define-key vim-normal-mode-map (kbd ":newframe RET") 'make-frame-command)
-(define-key vim-normal-mode-map (kbd ":buffer RET") 'switch-to-buffer)
-(define-key vim-normal-mode-map (kbd ":killbuffer RET") 'kill-buffer)
-(define-key vim-normal-mode-map (kbd ":vnew RET") 'find-file-vertical-split)
-(define-key vim-normal-mode-map (kbd ":vsplit RET") 'split-window-horizontally)
-(define-key vim-normal-mode-map (kbd ":hsplit RET") 'split-window-vertically)
-(define-key vim-normal-mode-map (kbd ":close RET") 'delete-window)
+;;(define-key vim-normal-mode-map (kbd ":open RET") 'find-file)
+;;(define-key vim-normal-mode-map (kbd ":edit RET") 'find-file)
+;;(define-key vim-normal-mode-map (kbd ":new RET") 'find-file-horizontal-split)
+;;(define-key vim-normal-mode-map (kbd ":newframe RET") 'make-frame-command)
+;;(define-key vim-normal-mode-map (kbd ":buffer RET") 'switch-to-buffer)
+;;(define-key vim-normal-mode-map (kbd ":killbuffer RET") 'kill-buffer)
+;;(define-key vim-normal-mode-map (kbd ":vnew RET") 'find-file-vertical-split)
+;;(define-key vim-normal-mode-map (kbd ":vsplit RET") 'split-window-horizontally)
+;;(define-key vim-normal-mode-map (kbd ":hsplit RET") 'split-window-vertically)
+;;(define-key vim-normal-mode-map (kbd ":close RET") 'delete-window)
+(define-key vim-normal-mode-map (kbd "::") 'execute-extended-command)
 (define-key vim-normal-mode-map (kbd "A") 'vim-shortcut-move-end-of-line)
 (define-key vim-normal-mode-map (kbd "I") 'vim-shortcut-move-beginning-of-line)
 (define-key vim-normal-mode-map (kbd "gg") 'beginning-of-buffer)
@@ -64,6 +59,17 @@
 (define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-open-newline-below)
 (define-key vim-normal-mode-map (kbd "s") 'vim-shortcut-substitute)
 
+(defalias 'edit 'find-file)
+(defalias 'buffer 'switch-to-buffer)
+(defalias 'vsplit 'split-window-horizontally)
+(defalias 'hsplit 'split-window-vertically)
+(defalias 'kb 'kill-buffer)
+(defalias 'close 'delete-window)
+(defalias 'new-frame 'make-frame-command)
+(defalias 'nf 'make-frame-command)
+(defalias 'edit-in-new-frame 'find-file-other-frame)
+(defalias 'editnf 'find-file-other-frame)
+(defalias 'edit-nf 'find-file-other-frame)
 ;; This section is related to parenthesis matching in normal mode
 (define-key vim-normal-mode-map (kbd "%") 'vim-paren-match)
 
@@ -91,17 +97,7 @@
   (insert "j")
   (self-insert-command 1))
 
-
-
-
-
-
-
-
 (define-key vim-special-keymap-j (kbd "k") 'enable-vim-normal-mode)
-
-
-
 
 
 (global-set-key (kbd "j") vim-special-keymap-j)
@@ -158,8 +154,14 @@
 
 (defun vim-shortcut-e ()
   (interactive)
-  (forward-word 1)
-  (backward-char 1))
+  (let ( (prev-pos (point)) )
+	(forward-word 1)
+	(backward-char 1)
+	(if (= prev-pos (point))
+		(progn 
+		  (forward-char)
+		  (vim-shortcut-e)))))
+	  
 
 (defun vim-shortcut-w ()
   (interactive)
@@ -311,14 +313,13 @@
 	   (forward-char)
 	   (backward-list)))))
 
-	   
+
 (defun vim-shortcut-S ()
   (interactive)
-  (kill-whole-line)
-  (disable-vim-normal-mode))
-
-
-
+  (if (utils-empty-line-p)
+	  (disable-vim-normal-mode)
+	(kill-whole-line)
+	(disable-vim-normal-mode)))
 
 ;;(define-key vim-normal-mode-map (kbd "C-c C-n") 'vim-toggle-relative-line)
 (defun vim-toggle-relative-line ()
@@ -327,3 +328,33 @@
    ( (eq display-line-numbers t) (setq display-line-numbers 'relative))
    ( (eq display-line-numbers 'relative) (setq display-line-numbers t))))
 
+
+(defun vim-shortcut-E ()
+  (interactive)
+  (let ((current-pos (point)))
+	(skip-chars-forward "^ \n")
+	(backward-char)
+	(if (>= current-pos (point))
+		(progn
+		  (forward-char)
+		  (skip-chars-forward " \n")
+		  (vim-shortcut-E)))))
+	  
+(defun vim-shortcut-B ()
+  (interactive)
+  (let ((current-pos (point)))
+	(skip-chars-backward "^ \n")
+	(if (<= current-pos (point))
+		(progn
+		  (skip-chars-backward " \n")
+		  (vim-shortcut-B)))))
+
+
+(defun vim-shortcut-W ()
+  (interactive)
+  (let ((current-pos (point)))
+	(vim-shortcut-E)
+	(forward-char)
+	(skip-chars-forward " \n")))
+
+(provide 'vim-normal-mode)
