@@ -128,7 +128,7 @@
 
 (defun vim-shortcut-remove-line ()
   (interactive)
-  (if (not (equal (line-beginning-position) (line-end-position) ))
+  (if (not (eq (line-beginning-position) (line-end-position) ))
 	  (progn
 		(move-beginning-of-line nil)
 		(kill-line)))

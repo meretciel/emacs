@@ -1,0 +1,48 @@
+
+(macroexpand-all (utils-make-insert-prefix-func "t"))
+vim-insert-prefix-t
+
+
+(macroexpand-all (utils-make-special-key-map "t"))
+(keymap (107 . enable-vim-normal-mode) (t . vim-insert-prefix-func))
+
+(fset 'test-func (utils-make-insert-prefix-func "t"))
+vim-insert-prefix-t
+
+(functionp 'test-func)
+t
+
+(defun vim-insert-prefix-j ()
+  (interactive)
+  (insert "j")
+  (self-insert-command 1))
+
+
+
+;; set the default command for all the keys
+;; the default command is vim-insert-prefix-j.
+(defvar vim-special-keymap-j
+  '(keymap (t . vim-insert-prefix-j)))
+;; add the key binding for the key "k".
+;; for this one, we need to enable the vim normal mode
+(define-key vim-special-keymap-j (kbd "k") 'enable-vim-normal-mode)
+
+
+
+
+(defmacro utils-make-insert-prefix-func (prefix-char)
+  (let ( ( insert-prefix-func-name  (make-symbol (concat "vim-insert-prefix-" prefix-char)) ) )
+    `(defun ,insert-prefix-func-name ()
+       (interactive)
+       (insert ,prefix-char)
+       (self-insert-command 1))))
+
+(macroexpand-all (utils-make-insert-prefix-func "t"))
+vim-insert-prefix-t
+
+(defmacro utils-make-special-key-map (prefix-char) 
+  `(let ( (vim-insert-prefix-func (make-symbol "vim-insert-prefix-func"))
+		  (vim-special-keymap     (make-symbol "vim-special-keymap")) ) 
+		(fset 'vim-insert-prefix-func (utils-make-insert-prefix-func ,prefix-char))
+		(setq vim-special-keymap '(keymap (t . vim-insert-prefix-func)))
+		vim-special-keymap))

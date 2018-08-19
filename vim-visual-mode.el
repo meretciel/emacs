@@ -1,6 +1,7 @@
 ;; In this file, we will define different visual mode
 
 (defvar vim-global-const-comment-symbol ";;") 
+(make-variable-buffer-local 'vim-global-const-comment-symbol)
 
 
 ;; (normal) visual mode
@@ -172,13 +173,15 @@
   (interactive)
   (let ( ( start-pos (min (region-beginning) (region-end) ) )
 		 ( num-lines (count-lines (region-beginning) (region-end)) ) )
+	(goto-char start-pos)
 	(cl-loop repeat num-lines do
 			 (if (not (utils-empty-line-p))
 				 (progn
 				   (move-beginning-of-line nil)
 				   (insert vim-global-const-comment-symbol)))
-			   (move-beginning-of-line 2)
-			 (enable-vim-normal-mode))))
+			   (move-beginning-of-line 2))
+;;	(goto-char start-pos)
+	(enable-vim-normal-mode)))
 
 
 (defun vvlm-remove-comment ()
@@ -194,9 +197,14 @@
 					 (move-end-of-line nil)
 					 (setq limit (point))
 					 (move-beginning-of-line nil)
-					 (re-search-forward target-string limit t)
-					 (replace-match "")))
+					 (if (re-search-forward target-string limit t)
+						 (replace-match ""))))
 			   (move-beginning-of-line 2))
 	  (goto-char start-pos)
 	  (enable-vim-normal-mode))))
+
+
+
+
+
 

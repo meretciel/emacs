@@ -1,10 +1,7 @@
 
 
 TODO:
-2. add M-: to the visual mode; otherwise we cannot execute the command in visual mode any more.:w
 
-- create key mapping for: oo, OO, O and r. In order to do so, we need the macro
-  to create the special key mapping more easily.
 - add ,w and ,W key binding to the normal mode
 
 - create macro for special key mapping creation
@@ -71,3 +68,8 @@ display-line-numbers
 
 
 
+
+print-length
+print-level
+eval-expression-print-length
+eval-expression-print-level
