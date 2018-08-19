@@ -28,7 +28,9 @@
 
 ;; define the key binding in the vim visual mode
 (define-key vim-visual-mode-map (kbd "ESC") 'keyboard-quit)
-(define-key vim-visual-mode-map (kbd "s") 'vvm-change-text)
+(define-key vim-visual-mode-map (kbd "s")   'vvm-change-text)
+(define-key vim-visual-mode-map (kbd "::")  'execute-extended-command)
+(define-key vim-visual-mode-map (kbd ":x")  'eval-expression)
 ;;(define-key vim-visual-mode-map (kbd "M-:") 'eval-expression)
 
 
@@ -39,7 +41,10 @@
 (define-key vim-visual-line-mode-map (kbd "k")   'vvlm-previous-line)
 (define-key vim-visual-line-mode-map (kbd "d")   'vvlm-kill-selected)
 (define-key vim-visual-line-mode-map (kbd "ESC") 'keyboard-quit)
-
+(define-key vim-visual-line-mode-map (kbd ",c") 'vvlm-add-comment)
+(define-key vim-visual-line-mode-map (kbd ",u") 'vvlm-remove-comment)
+(define-key vim-visual-line-mode-map (kbd "::")  'execute-extended-command)
+(define-key vim-visual-line-mode-map (kbd ":x")  'eval-expression)
 
 
 (defun vim-visual-line-mode (&optional arg)
@@ -146,11 +151,14 @@
 
 (defun vvlm-kill-selected ()
   (interactive)
-  (kill-region (region-beginning) (region-end))
-  (delete-forward-char 1)
-  (setq vim-start-new-line-when-paste t)
-  (setq vim-start-new-line-text (car kill-ring-yank-pointer))
-  (enable-vim-normal-mode))
+  (if (use-region-p)
+	  (progn
+		(kill-region (region-beginning) (region-end))
+		(delete-forward-char 1)
+		(setq vim-start-new-line-when-paste t)
+		(setq vim-start-new-line-text (car kill-ring-yank-pointer))
+		(enable-vim-normal-mode))))
+
 
 
 (defun vvm-change-text ()
@@ -158,4 +166,37 @@
   (forward-char)
   (kill-region (region-beginning) (region-end))
   (disable-vim-normal-mode))
+
+
+(defun vvlm-add-comment ()
+  (interactive)
+  (let ( ( start-pos (min (region-beginning) (region-end) ) )
+		 ( num-lines (count-lines (region-beginning) (region-end)) ) )
+	(cl-loop repeat num-lines do
+			 (if (not (utils-empty-line-p))
+				 (progn
+				   (move-beginning-of-line nil)
+				   (insert vim-global-const-comment-symbol)))
+			   (move-beginning-of-line 2)
+			 (enable-vim-normal-mode))))
+
+
+(defun vvlm-remove-comment ()
+  (interactive)
+  (let ( ( start-pos (min (region-beginning) (region-end) ) )
+		 ( num-lines (count-lines (region-beginning) (region-end)) ) )
+	(let ( limit
+	       (target-string (concat "^" vim-global-const-comment-symbol)))
+	  (goto-char start-pos)
+	  (cl-loop repeat num-lines do
+			   (if (not (utils-empty-line-p))
+				   (progn
+					 (move-end-of-line nil)
+					 (setq limit (point))
+					 (move-beginning-of-line nil)
+					 (re-search-forward target-string limit t)
+					 (replace-match "")))
+			   (move-beginning-of-line 2))
+	  (goto-char start-pos)
+	  (enable-vim-normal-mode))))
 

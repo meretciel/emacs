@@ -24,12 +24,14 @@
 (define-key vim-normal-mode-map (kbd "B") 'vim-shortcut-B)
 (define-key vim-normal-mode-map (kbd "e") 'vim-shortcut-e)
 (define-key vim-normal-mode-map (kbd "E") 'vim-shortcut-E)
-(define-key vim-normal-mode-map (kbd "S") 'vim-shortcut-S)
 (define-key vim-normal-mode-map (kbd "w") 'vim-shortcut-w)
 (define-key vim-normal-mode-map (kbd "W") 'vim-shortcut-W)
+
+(define-key vim-normal-mode-map (kbd "S") 'vim-shortcut-S)
 (define-key vim-normal-mode-map (kbd "P") 'yank)
 (define-key vim-normal-mode-map (kbd "p") 'vim-shortcut-p)
 (define-key vim-normal-mode-map (kbd "yy") 'vim-shortcut-yy)
+
 (define-key vim-normal-mode-map (kbd "i") 'disable-vim-normal-mode)
 (define-key vim-normal-mode-map (kbd "a") 'vim-shortcut-a)
 (define-key vim-normal-mode-map (kbd "C-c C-n") 'vim-toggle-relative-line)
@@ -56,7 +58,9 @@
 (define-key vim-normal-mode-map (kbd "^") 'move-beginning-of-line)
 (define-key vim-normal-mode-map (kbd "0") 'move-beginning-of-line)
 (define-key vim-normal-mode-map (kbd "$") 'move-end-of-line)
-(define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-open-newline-below)
+;;(define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-open-newline-below)
+(define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-o-trigger)
+(define-key vim-normal-mode-map (kbd "O") 'vim-shortcut-O-trigger)
 (define-key vim-normal-mode-map (kbd "s") 'vim-shortcut-substitute)
 
 (defalias 'edit 'find-file)
@@ -138,7 +142,49 @@
 	(open-line n))
   (disable-vim-normal-mode))
 
+(defun vim-shortcut-o-trigger (&optional N)
+  (interactive "P")
+  (with-timeout (0.18 (vim-shortcut-open-newline-below N))
+	(let ((user-input (read-char)))
+	  (if (equal user-input ?o)
+		  ;; insert a new line below and disable the normal mode
+		  (let ( (n (if (null N) 1 (prefix-numeric-value N)))
+				 (prev-pos (point)))
+			(move-end-of-line nil)
+			(insert (make-string n ?\n))
+			(goto-char prev-pos))
+		
+		(move-end-of-line nil)
+		(insert "\n")
+		(insert user-input)
+		(disable-vim-normal-mode)))))
 
+(defun vim-shortcut-O-helper (&optional N)
+  (let ( (n (if (null N) 1 (prefix-numeric-value N))) )
+	(move-beginning-of-line nil)
+	(insert (make-string n ?\n))
+	(move-beginning-of-line 0)))
+  
+
+(defun vim-shortcut-O-trigger (&optional N)
+  (interactive "P")
+  (with-timeout (0.18
+				 (vim-shortcut-O-helper N)
+				 (disable-vim-normal-mode))
+
+	(let ( (user-input (read-char)) )
+	  (if (equal user-input ?O)
+		  (let ( (n (if (null N) 1 (prefix-numeric-value N)))
+				 (prev-pos (point)) )
+			(move-beginning-of-line nil)
+			(insert (make-string n ?\n))
+			(goto-char (+ n prev-pos)))
+
+		(move-beginning-of-line nil)
+		(insert "\n")
+		(move-beginning-of-line -1)
+		(insert user-input)
+		(disable-vim-normal-mode)))))
 
 
 (defun vim-shortcut-substitute ()
@@ -170,8 +216,15 @@
 
 (defun vim-shortcut-a ()
   (interactive)
-  (forward-char 1)
-  (disable-vim-normal-mode))
+  (let ( (prev-pos (point)) )
+	(move-end-of-line nil)
+	(if (equal prev-pos (point))
+		(progn
+		  (insert " ")
+		  (disable-vim-normal-mode))
+	  (goto-char prev-pos)
+	  (forward-char 1)
+	  (disable-vim-normal-mode))))
 
 (defun vim-shortcut-G (&optional N)
   (interactive "P")
@@ -218,7 +271,8 @@
   (disable-vim-visual-mode)
   (disable-vim-visual-line-mode)
   (vim-normal-mode 1)
-  (force-mode-line-update))
+  (force-mode-line-update)
+  (keyboard-quit))
 
 (defun disable-vim-normal-mode ()
   (interactive)

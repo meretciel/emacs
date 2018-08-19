@@ -59,7 +59,7 @@ Command
 13. search
 14. how to communicate with python interpreter.
 15. how to connec to the internet and send requestion and get response.
-
+17. read-char and with-timeout
 
 
 global-display-line-numbers-mode
