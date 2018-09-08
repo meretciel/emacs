@@ -162,12 +162,25 @@
 
 
 
+;;(defun vvm-change-text ()
+;;  (interactive)
+;;  (forward-char)
+;;  (kill-region (region-beginning) (region-end))
+;;  (disable-vim-normal-mode))
+
 (defun vvm-change-text ()
   (interactive)
-  (forward-char)
-  (kill-region (region-beginning) (region-end))
+  (let (( l-region-start (region-beginning) )
+		( l-region-end   (region-end) ) )
+	(move-end-of-line nil)
+	(let ( (current-pos (point)) )
+	  (if (equal l-region-end current-pos)
+		  (kill-region l-region-start l-region-end)
+		(goto-char l-region-end)
+		(forward-char)
+		(kill-region (region-begging) (region-end)))))
   (disable-vim-normal-mode))
-
+		  
 
 (defun vvlm-add-comment ()
   (interactive)

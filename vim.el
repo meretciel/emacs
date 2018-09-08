@@ -15,11 +15,13 @@
 	  (setq vim-normal-mode-map (make-keymap))
 	  (suppress-keymap vim-normal-mode-map)))
 
-;; movement 
+;; Basic Movement 
 (define-key vim-normal-mode-map (kbd "h") 'backward-char)
 (define-key vim-normal-mode-map (kbd "j") 'next-line)
 (define-key vim-normal-mode-map (kbd "k") 'previous-line)
 (define-key vim-normal-mode-map (kbd "l") 'forward-char)
+
+;; Movement related to work
 (define-key vim-normal-mode-map (kbd "b") 'backward-word)
 (define-key vim-normal-mode-map (kbd "B") 'vim-shortcut-B)
 (define-key vim-normal-mode-map (kbd "e") 'vim-shortcut-e)
@@ -27,6 +29,7 @@
 (define-key vim-normal-mode-map (kbd "w") 'vim-shortcut-w)
 (define-key vim-normal-mode-map (kbd "W") 'vim-shortcut-W)
 
+;; Editing Shortcuts
 (define-key vim-normal-mode-map (kbd "S") 'vim-shortcut-S)
 (define-key vim-normal-mode-map (kbd "P") 'yank)
 (define-key vim-normal-mode-map (kbd "p") 'vim-shortcut-p)
@@ -62,6 +65,7 @@
 (define-key vim-normal-mode-map (kbd "o") 'vim-shortcut-o-trigger)
 (define-key vim-normal-mode-map (kbd "O") 'vim-shortcut-O-trigger)
 (define-key vim-normal-mode-map (kbd "s") 'vim-shortcut-substitute)
+(define-key vim-normal-mode-map (kbd "/") nil)
 
 (defalias 'edit     'find-file)
 (defalias 'buffer   'switch-to-buffer)
